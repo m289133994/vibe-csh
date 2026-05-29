@@ -77,3 +77,8 @@ application-local.properties
 
 # Maven wrapper (可选)
 !.mvn/wrapper/maven-wrapper.jar
+
+# Docker
+.dockerignore
+.docker/
+docker-compose.override.yml
