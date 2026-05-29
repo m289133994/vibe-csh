@@ -8,18 +8,9 @@ services:
       dockerfile: vibe-csh-service/Dockerfile
     container_name: vibe-service
     restart: always
-    ports:
-      - "8080:8080"
+    network_mode: host
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/vibedb?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/vibedb?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 
       TZ: Asia/Shanghai
-    networks:
-      - vibe-network
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
-networks:
-  vibe-network:
-    driver: bridge
