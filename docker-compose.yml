@@ -1,52 +1,24 @@
 version: '3.8'
 
 services:
-  # MySQL 数据库
-  mysql:
-    image: mysql:8.0
-    container_name: vibe-mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root123456
-      MYSQL_DATABASE: vibedb
-      MYSQL_USER: vibe
-      MYSQL_PASSWORD: vibe123
-      TZ: Asia/Shanghai
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql
-      - ./vibe-csh-service/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
-    networks:
-      - vibe-network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot123456"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   # 后端应用
   backend:
     build:
       context: .
       dockerfile: vibe-csh-service/Dockerfile
-    container_name: vibe-backend
+    container_name: vibe-service
     restart: always
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/vibedb?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
-      SPRING_DATASOURCE_USERNAME: vibe
-      SPRING_DATASOURCE_PASSWORD: vibe123
+      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/vibedb?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 
       TZ: Asia/Shanghai
-    depends_on:
-      mysql:
-        condition: service_healthy
     networks:
       - vibe-network
-
-volumes:
-  mysql-data:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 networks:
   vibe-network:
